@@ -3,7 +3,8 @@ I will use this for my mods but you can use it too in your projects, if you need
 Feautures:
 Text appearing and disapearing on screen.
 
-[Implementation to your project](https://github.com/NC-devC/NeoCatLib/wiki/Implementation)
+Implementation to your project:
+https://github.com/NC-devC/NeoCatLib/wiki/Implementation
 
 Usage:
 All common functions of this API located in NeoCatLibUtils class.
