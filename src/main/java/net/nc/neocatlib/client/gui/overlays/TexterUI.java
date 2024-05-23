@@ -24,7 +24,6 @@ class TextMsgShowData
     public int yOffset = 0;
     public int coolestX;
     public int coolestY;
-    public boolean shouldDestroy = false;
     public void ChangeText(String newMsg)
     {
         this.msg = newMsg;
@@ -35,12 +34,12 @@ class TextMsgShowData
         this.msg = msg;
         this.id = UUID.randomUUID();
         this.arrived = false;
-        this.xOffset = -100;
+        this.xOffset = -105;
         int width  = Minecraft.getInstance().getWindow().getGuiScaledWidth();
         int height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
         this.coolestX = (width / 11) - 35;
-        int currentI = NeoCatLib.currentTexter.msgs.toArray().length+1;
-        this.coolestY = (height / 11) - 20 + (currentI * 10);
+        int niceY = (10 * NeoCatLib.currentTexter.msgs.toArray().length) + 10;
+        this.coolestY = (height / 11) - 20 + (niceY);
     }
 }
 
@@ -50,6 +49,7 @@ public class TexterUI implements IGuiOverlay {
     public int ticks;
     public int seconds;
     public int additionPerDraw = 1;
+    private int canAppearAtY = 0;
 
     public List<TextMsgShowData> msgs = new ArrayList<TextMsgShowData>();
 
@@ -87,66 +87,41 @@ public class TexterUI implements IGuiOverlay {
 
             y += msg.yOffset;
 
+            int alpha = 0;
+
             if (!msg.arrived) {
                 if (msg.xOffset == 0) {
                     msg.arrived = true;
                 } else {
+                    alpha += (msg.arrivingTicks/3) * additionPerDraw * 10;
+                    if(alpha > 255) {alpha = 255;}
+                    if(alpha < 0) {alpha = 0;}
+
                     msg.xOffset += additionPerDraw;
                     msg.arrivingTicks += 1;
                 }
             }
             else
             {
-                msg.ticksAfterArriving+=1;
                 if(!msg.leaving) {
-                    if(msg.ticksAfterArriving >= 120)
-                    {
+                    msg.ticksAfterArriving += 1;
+                    if (msg.ticksAfterArriving >= 120) {
+                        msg.ticksAfterArriving = 120;
                         msg.leaving = true;
                     }
                 }
                 else
                 {
+                    msg.ticksAfterArriving+=1;
                     msg.yOffset -= additionPerDraw;
-                    if((msg.yOffset <= -100 - (currentI * 10)) || (msg.shouldDestroy))
+                    alpha = 255 - (((msg.ticksAfterArriving - 120)/3) * additionPerDraw * 15);
+                    if(alpha > 255) {alpha = 255;}
+                    if(alpha < 0) {alpha = 0;}
+                    if(alpha <= 0)
                     {
                         msgs.remove(msg);
                     }
                 }
-            }
-
-            int alpha = 0;
-
-            if(!msg.arrived)
-            {
-                alpha += (msg.arrivingTicks/3) * additionPerDraw * 10;
-            }
-            else
-            {
-                if(msg.leaving)
-                {
-                    alpha = 255 - (((msg.ticksAfterArriving - 120)/3) * additionPerDraw * 15);
-                }
-                else
-                {
-                    alpha = 255;
-                }
-            }
-
-            if(alpha > 255) {alpha = 255;}
-            if(msg.arrived)
-            {
-                if(alpha < 0)
-                {
-                    alpha = 0;
-                }
-                if(alpha == 0)
-                {
-                    msg.shouldDestroy = true;
-                }
-            }
-            else
-            {
-                if(alpha <= 0) {alpha = 5;}
             }
 
             int colour = NeoCatLibUtils.RGBToDecimal(255,255,255,alpha);
