@@ -24,6 +24,8 @@ class TextMsgShowData
     public int yOffset = 0;
     public int coolestX;
     public int coolestY;
+    public int currentAlpha = 0;
+    public boolean shouldDraw = true;
     public void ChangeText(String newMsg)
     {
         this.msg = newMsg;
@@ -87,46 +89,60 @@ public class TexterUI implements IGuiOverlay {
 
             y += msg.yOffset;
 
-            int alpha = 0;
+            int alpha = msg.currentAlpha;
 
             if (!msg.arrived) {
+                boolean arrived = false;
                 if (msg.xOffset == 0) {
-                    msg.arrived = true;
-                } else {
-                    alpha += (msg.arrivingTicks/3) * additionPerDraw * 10;
-                    if(alpha > 255) {alpha = 255;}
-                    if(alpha < 0) {alpha = 0;}
+                    arrived = true;
+                }
 
+                alpha += additionPerDraw * 5;
+                if (alpha > 255) {
+                    alpha = 255;
+                }
+                if (alpha < 0) {
+                    alpha = 0;
+                }
+                msg.currentAlpha = alpha;
+
+                if (alpha == 255 && arrived) {
+                    msg.arrived = true;
+                }
+
+                if (arrived == false) {
                     msg.xOffset += additionPerDraw;
                     msg.arrivingTicks += 1;
                 }
-            }
-            else
-            {
-                if(!msg.leaving) {
+            } else {
+                if (!msg.leaving) {
                     msg.ticksAfterArriving += 1;
                     if (msg.ticksAfterArriving >= 120) {
                         msg.ticksAfterArriving = 120;
                         msg.leaving = true;
                     }
-                }
-                else
-                {
-                    msg.ticksAfterArriving+=1;
+                } else {
+                    msg.ticksAfterArriving += 1;
                     msg.yOffset -= additionPerDraw;
-                    alpha = 255 - (((msg.ticksAfterArriving - 120)/3) * additionPerDraw * 15);
-                    if(alpha > 255) {alpha = 255;}
-                    if(alpha < 0) {alpha = 0;}
-                    if(alpha <= 0)
-                    {
-                        msgs.remove(msg);
+
+                    alpha -= additionPerDraw * 15;
+                    if (alpha > 255) {
+                        alpha = 255;
                     }
+                    if (alpha <= 0) {
+                        msg.shouldDraw = false;
+                    }
+                    msg.currentAlpha = alpha;
                 }
             }
 
-            int colour = NeoCatLibUtils.RGBToDecimal(255,255,255,alpha);
-
-            guiGraphics.drawString(mc.font, msg.msg, x, y, colour);
+            int colour = NeoCatLibUtils.RGBToDecimal(255, 255, 255, alpha);
+            if (msg.shouldDraw == true) {
+                guiGraphics.drawString(mc.font, msg.msg, x, y, colour);
+            } else
+            {
+                msgs.remove(msg);
+            }
         }
     }
 }
