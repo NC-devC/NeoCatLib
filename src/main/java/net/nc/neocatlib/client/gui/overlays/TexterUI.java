@@ -26,6 +26,7 @@ class TextMsgShowData
     public int coolestY;
     public int currentAlpha = 0;
     public boolean shouldDraw = true;
+    public int niceY = 0;
     public void ChangeText(String newMsg)
     {
         this.msg = newMsg;
@@ -40,8 +41,11 @@ class TextMsgShowData
         int width  = Minecraft.getInstance().getWindow().getGuiScaledWidth();
         int height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
         this.coolestX = (width / 11) - 35;
-        int niceY = (10 * NeoCatLib.currentTexter.msgs.toArray().length) + 10;
-        this.coolestY = (height / 11) - 20 + (niceY);
+        this.niceY = 10;
+        if(NeoCatLib.currentTexter.msgs.size() >= 1) {
+            this.niceY = NeoCatLib.currentTexter.msgs.get(NeoCatLib.currentTexter.msgs.size() - 1).niceY + 10;
+        }
+        this.coolestY = (height / 11) - 20 + (this.niceY);
     }
 }
 
@@ -89,24 +93,21 @@ public class TexterUI implements IGuiOverlay {
 
             y += msg.yOffset;
 
-            int alpha = msg.currentAlpha;
-
             if (!msg.arrived) {
                 boolean arrived = false;
                 if (msg.xOffset == 0) {
                     arrived = true;
                 }
 
-                alpha += additionPerDraw * 5;
-                if (alpha > 255) {
-                    alpha = 255;
+                msg.currentAlpha += additionPerDraw * 5;
+                if (msg.currentAlpha > 255) {
+                    msg.currentAlpha = 255;
                 }
-                if (alpha < 0) {
-                    alpha = 0;
+                if (msg.currentAlpha < 0) {
+                    msg.currentAlpha = 0;
                 }
-                msg.currentAlpha = alpha;
 
-                if (alpha == 255 && arrived) {
+                if (msg.currentAlpha == 255 && arrived) {
                     msg.arrived = true;
                 }
 
@@ -125,18 +126,12 @@ public class TexterUI implements IGuiOverlay {
                     msg.ticksAfterArriving += 1;
                     msg.yOffset -= additionPerDraw;
 
-                    alpha -= additionPerDraw * 15;
-                    if (alpha > 255) {
-                        alpha = 255;
-                    }
-                    if (alpha <= 0) {
-                        msg.shouldDraw = false;
-                    }
-                    msg.currentAlpha = alpha;
+                    msg.currentAlpha -= additionPerDraw * 5;
+                    if (msg.currentAlpha <= 0) { msg.shouldDraw = false; }
                 }
             }
 
-            int colour = NeoCatLibUtils.RGBToDecimal(255, 255, 255, alpha);
+            int colour = NeoCatLibUtils.RGBToDecimal(255, 255, 255, msg.currentAlpha);
             if (msg.shouldDraw == true) {
                 guiGraphics.drawString(mc.font, msg.msg, x, y, colour);
             } else

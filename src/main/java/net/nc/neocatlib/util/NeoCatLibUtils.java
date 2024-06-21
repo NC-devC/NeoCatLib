@@ -7,10 +7,6 @@ import net.nc.neocatlib.NeoCatLib;
 import net.nc.neocatlib.network.CSendGuiMsgPacket;
 import net.nc.neocatlib.network.PacketHandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.nio.charset.StandardCharsets;
-
 public class NeoCatLibUtils {
 
     // Utils for chat
