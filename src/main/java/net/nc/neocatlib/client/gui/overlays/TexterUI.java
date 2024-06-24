@@ -42,7 +42,7 @@ class TextMsgShowData
         int height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
         this.coolestX = (width / 11) - 35;
         this.niceY = 10;
-        if(NeoCatLib.currentTexter.msgs.size() >= 1) {
+        if(!NeoCatLib.currentTexter.msgs.isEmpty()) {
             this.niceY = NeoCatLib.currentTexter.msgs.get(NeoCatLib.currentTexter.msgs.size() - 1).niceY + 10;
         }
         this.coolestY = (height / 11) - 20 + (this.niceY);
@@ -55,7 +55,6 @@ public class TexterUI implements IGuiOverlay {
     public int ticks;
     public int seconds;
     public int additionPerDraw = 1;
-    private int canAppearAtY = 0;
 
     public List<TextMsgShowData> msgs = new ArrayList<TextMsgShowData>();
 
@@ -94,10 +93,7 @@ public class TexterUI implements IGuiOverlay {
             y += msg.yOffset;
 
             if (!msg.arrived) {
-                boolean arrived = false;
-                if (msg.xOffset == 0) {
-                    arrived = true;
-                }
+                boolean arrived = msg.xOffset == 0;
 
                 msg.currentAlpha += additionPerDraw * 5;
                 if (msg.currentAlpha > 255) {
@@ -111,7 +107,7 @@ public class TexterUI implements IGuiOverlay {
                     msg.arrived = true;
                 }
 
-                if (arrived == false) {
+                if (!arrived) {
                     msg.xOffset += additionPerDraw;
                     msg.arrivingTicks += 1;
                 }
@@ -132,7 +128,7 @@ public class TexterUI implements IGuiOverlay {
             }
 
             int colour = NeoCatLibUtils.RGBToDecimal(255, 255, 255, msg.currentAlpha);
-            if (msg.shouldDraw == true) {
+            if (msg.shouldDraw) {
                 guiGraphics.drawString(mc.font, msg.msg, x, y, colour);
             } else
             {
