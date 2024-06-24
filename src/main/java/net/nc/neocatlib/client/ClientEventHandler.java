@@ -8,7 +8,6 @@ import net.nc.neocatlib.NeoCatLib;
 import net.nc.neocatlib.client.gui.overlays.TexterUI;
 
 public class ClientEventHandler {
-
     @Mod.EventBusSubscriber(modid = NeoCatLib.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public class ModClientEventHandler
     {

@@ -11,7 +11,7 @@ import net.nc.neocatlib.NeoCatLib;
 public class PacketHandler {
 
     public static final SimpleChannel INSTANCE = ChannelBuilder.named(
-            new ResourceLocation(NeoCatLib.MODID, "main"))
+            new ResourceLocation(NeoCatLib.MODID, "neocatlib"))
             .serverAcceptedVersions(((status, version) -> true))
             .clientAcceptedVersions(((status, version) -> true))
             .networkProtocolVersion(1)
