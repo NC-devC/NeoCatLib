@@ -42,14 +42,12 @@ public class NeoCatLibUtils {
     }
 
     // Creates basic message that appears and disappears (ClientSide)
-    @OnlyIn(Dist.CLIENT)
     public static void createGUIMessage(String msg)
     {
         NeoCatLib.currentTexter.writeSomething(msg);
     }
 
     // Sends a basic message that appears and disappears (ServerSide)
-    @OnlyIn(Dist.DEDICATED_SERVER)
     public static void sendGUIMessage(String msg, ServerPlayer plr)
     {
         PacketHandler.sendToPlr(new CSendGuiMsgPacket(msg), plr);
