@@ -3,6 +3,8 @@ package net.nc.neocatlib.util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.nc.neocatlib.NeoCatLib;
 import net.nc.neocatlib.network.CSendGuiMsgPacket;
 import net.nc.neocatlib.network.PacketHandler;
@@ -40,12 +42,14 @@ public class NeoCatLibUtils {
     }
 
     // Creates basic message that appears and disappears (ClientSide)
+    @OnlyIn(Dist.CLIENT)
     public static void createGUIMessage(String msg)
     {
         NeoCatLib.currentTexter.writeSomething(msg);
     }
 
     // Sends a basic message that appears and disappears (ServerSide)
+    @OnlyIn(Dist.DEDICATED_SERVER)
     public static void sendGUIMessage(String msg, ServerPlayer plr)
     {
         PacketHandler.sendToPlr(new CSendGuiMsgPacket(msg), plr);
